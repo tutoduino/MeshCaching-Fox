@@ -18,6 +18,57 @@ SimpleMeshTables tables;
 
 MyMesh the_mesh(board, radio_driver, *new ArduinoMillis(), fast_rng, rtc_clock, tables);
 
+// -----------------------------------------------------------------------------
+// Periodic RAW_CUSTOM zero-hop beacon
+// -----------------------------------------------------------------------------
+#define RAW_BEACON_INTERVAL_MS 10000
+static uint32_t next_raw_beacon = 0;
+
+/**
+ * @brief Send a raw beacon frame.
+ *
+ * Transmits a small raw data packet used by MeshCaching-FoxHunter to
+ * locate this Fox device during a MeshCaching activity (fox hunting).
+ *
+ * The beacon payload is a 5-byte frame:
+ *   - bytes 0-2: "MCB" magic string (MeshCore Beacon),
+ *     used by the hunter to identify the frame type;
+ *   - bytes 3-4: the first two bytes of this node's public key,
+ *     used to distinguish this Fox from other nearby Foxes.
+ *
+ * The frame is sent zero-hop: it is received by direct neighbours
+ * only and never repeated across the mesh, which limits its impact
+ * on the channel.
+ *
+ * @note This beacon is sent every 10 seconds and is intended solely
+ *       for MeshCaching activities. Outside of such an activity, it
+ *       wastes LoRa bandwidth and degrades the mesh for other nodes.
+ *
+ * @see MESH_BROADCAST_PERIOD_MS for the transmission interval.
+ */
+static void sendRawBeacon()
+{
+    uint8_t data[5];
+
+    // Magic string identifying the frame as a MeshCaching-Fox beacon.
+    // "MCB" = MeshCore Beacon
+    data[0] = 'M';
+    data[1] = 'C';
+    data[2] = 'B';
+
+    // First two bytes of this node's public key: a short, unique
+    // fingerprint allowing FoxHunter to identify which Fox is heard.
+    data[3] = the_mesh.self_id.pub_key[0];
+    data[4] = the_mesh.self_id.pub_key[1];
+
+    // Build a raw (unencrypted) data packet with the beacon payload
+    mesh::Packet *pkt = the_mesh.createRawData(data, sizeof(data));
+    if (pkt) {
+        // Zero-hop = direct transmission to immediate neighbours only.
+        the_mesh.sendZeroHop(pkt);
+    }
+}
+
 void halt() {
   while (1) ;
 }
@@ -119,6 +170,9 @@ void setup() {
   the_mesh.sendSelfAdvertisement(16000, false);
 #endif
 
+  // Schedule the next beacon transmission
+  next_raw_beacon = the_mesh.futureMillis(RAW_BEACON_INTERVAL_MS);
+
   board.onBootComplete();
 }
 
@@ -194,6 +248,13 @@ void loop() {
     userBtnDownAt = 0;
   }
 #endif
+
+
+  // Periodic zero-hop RAW_CUSTOM beacon
+  if (the_mesh.millisHasNowPassed(next_raw_beacon)) {
+    next_raw_beacon = the_mesh.futureMillis(RAW_BEACON_INTERVAL_MS);
+    sendRawBeacon();
+  }
 
   the_mesh.loop();
   sensors.loop();
