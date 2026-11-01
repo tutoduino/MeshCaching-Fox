@@ -1,12 +1,10 @@
 ## About MeshCaching-Fox
 
-MeshCaching-Fox is a Fox firmware built on the MeshCore repeater, designed for [MeshCaching](https://tutoduino.fr/en/articles/organize-meshcaching/) activities.
+MeshCaching-Fox is a firmware built on the MeshCore repeater, designed for [MeshCaching](https://tutoduino.fr/en/articles/organize-meshcaching/) activities.
 
-MeshCaching-Fox operates as a standard MeshCore repeater, but additionally transmits a zero-hop beacon frame every 10 seconds. This beacon frame is used by MeshCaching-FoxHunter to locate the MeshCaching-Fox.
+The Fox acts as a standard MeshCore repeater, but additionally transmits a zero-hop beacon frame every 10 seconds. This beacon frame is used by [FoxHunter](https://github.com/tutoduino/meshcaching) to locate the Fox.
 
-Only one file has been modified from the original MeshCore repeater code:
-
-    examples/simple_repeater/main.cpp
+Note that only the *main.cpp* file of the *simple_repeater* example has been modified from the original MeshCore repeater code.
 
 !! ONLY USE THIS FIRMWARE FOR MESHCACHING ACTIVITIES !!
 
@@ -38,6 +36,8 @@ The firmware binary is located here:
 
     .pio/build/Heltec_v3_repeater/firmware.bin
 
-You can upload it to your device using MeshCore [Flasher](https://flasher.meshcore.io/):
+You can upload it to your device using Custom firmware option in MeshCore [Flasher](https://flasher.meshcore.io/):
 
+## Configuration
+Please follow guidelines available on [MeshCaching](https://tutoduino.fr/en/articles/organize-meshcaching/) page.
     
