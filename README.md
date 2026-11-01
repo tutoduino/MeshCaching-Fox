@@ -4,6 +4,10 @@ MeshCaching-Fox is a Fox firmware built on the MeshCore repeater, designed for [
 
 MeshCaching-Fox operates as a standard MeshCore repeater, but additionally transmits a zero-hop beacon frame every 10 seconds. This beacon frame is used by MeshCaching-FoxHunter to locate the MeshCaching-Fox.
 
+Only one file has been modified from the original MeshCore repeater code:
+
+    examples/simple_repeater/main.cpp
+
 !! ONLY USE THIS FIRMWARE FOR MESHCACHING ACTIVITIES !!
 
 Indeed, this firmware transmits a beacon every 10 seconds, which is useful only for direction-finding. Outside a MeshCaching activity, it wastes LoRa bandwidth and degrades the mesh for other nodes.
