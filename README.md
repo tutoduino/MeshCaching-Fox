@@ -28,15 +28,9 @@ install the prerequisites:
     python -m pip install --upgrade pip
     python -m pip install --upgrade platformio
 
-Compile the firmware for your target (for Heltec_v3 here):
+Compile the firmware and upload it on target (Heltec_v3 here):
 
-    pio run -e Heltec_v3_repeater
-
-The firmware binary is located here:
-
-    .pio/build/Heltec_v3_repeater/firmware.bin
-
-You can upload it to your device using Custom firmware option in MeshCore [Flasher](https://flasher.meshcore.io/):
+    pio run -e Heltec_v3_repeater -t upload
 
 ## Configuration
 Please follow guidelines available on [MeshCaching](https://tutoduino.fr/en/articles/organize-meshcaching/) page.
